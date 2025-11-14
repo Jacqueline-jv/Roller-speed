@@ -2,17 +2,19 @@ package com.rollerspeed.rollerspeed;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/")
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping(("/"))
     public String index() {
         System.out.println("➡ Cargando página: index");
         return "index";
     }
 
-    @GetMapping("/mision")
+    @GetMapping(("/mision"))
     public String mision() {
         System.out.println("➡ Cargando página: mision");
         return "mision";
