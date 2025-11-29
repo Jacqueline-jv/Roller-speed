@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Noticias Roller Speed</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f6fa;
+        }
+        .news-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+        .news-img {
+            height: 180px;
+            object-fit: cover;
+        }
+        h1 {
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body class="container py-5">
+
+    <h1 class="text-center mb-5">📰 Noticias Roller Speed</h1>
+
+    <div class="row g-4">
+
+        <!-- Tarjeta 1 -->
+        <div class="col-md-4">
+            <div class="card news-card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMknfhxm_3O53ait8CLbpzGGg5gV6r9GjTNA&s" class="news-img" alt="Horarios">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Nuevos horarios disponibles</h5>
+                    <p class="card-text">
+                        Ahora contamos con clases en la mañana y tarde para mayor comodidad.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 2 -->
+        <div class="col-md-4">
+            <div class="card news-card">
+                <img src="https://fedepatin.org.co/wp-content/uploads/2024/04/4TT2024-01-jpg.webp" class="news-img" alt="Torneo Regional">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Inscripciones abiertas para el torneo regional</h5>
+                    <p class="card-text">
+                        ¡No te quedes por fuera! Inscríbete y demuestra tu talento en la pista.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="col-md-4">
+            <div class="card news-card">
+                <img src="https://img.olympics.com/images/image/private/t_social_share_thumb/f_auto/primary/uy01dhb4idwszhjfddch" class="news-img" alt="Taller de velocidad">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Taller avanzado de técnicas de velocidad</h5>
+                    <p class="card-text">
+                        Entrenamiento especializado para alumnos de nivel intermedio y avanzado.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-dark btn-lg px-4">⬅ Volver al inicio</a>
+    </div>
+
+</body>
+</html>

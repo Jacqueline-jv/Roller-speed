@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class HomeController {
 
-    @GetMapping(("/"))
+    @GetMapping("/")
     public String index() {
         System.out.println("➡ Cargando página: index");
         return "index";
     }
 
-    @GetMapping(("/mision"))
+    @GetMapping("/mision")
     public String mision() {
         System.out.println("➡ Cargando página: mision");
         return "mision";
@@ -43,4 +43,17 @@ public class HomeController {
         System.out.println("➡ Cargando página: eventos");
         return "eventos";
     }
+
+@GetMapping("/noticias")
+public String noticias() {
+    System.out.println("➡ Cargando página: noticias");
+    return "noticias";
+    }
+
+@GetMapping("/clases")
+public String clases() {
+    System.out.println("➡ Cargando página: clases");
+    return "clases";
+    }
+
 }
