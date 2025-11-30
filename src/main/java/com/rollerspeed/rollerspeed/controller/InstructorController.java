@@ -13,4 +13,3 @@ public class InstructorController {
         return "instructor-inicio";
     }
 }
-

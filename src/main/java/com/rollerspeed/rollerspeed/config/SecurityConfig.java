@@ -32,7 +32,7 @@ public class SecurityConfig {
                         "/css/**", "/js/**", "/images/**"
                 ).permitAll()
 
-                // ✔ Acceso por rol (tú controlas esto después del login manual)
+                // ✔ Acceso por rol 
                 .requestMatchers("/admin/**").permitAll()
                 .requestMatchers("/instructor/**").permitAll()
                 .requestMatchers("/alumno/**").permitAll()

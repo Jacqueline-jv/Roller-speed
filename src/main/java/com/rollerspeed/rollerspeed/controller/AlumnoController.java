@@ -10,6 +10,6 @@ public class AlumnoController {
 
     @GetMapping("/inicio")
     public String inicioAlumno() {
-        return "alumno-inicio"; // esta vista debe existir en templates
+        return "alumno-inicio"; 
     }
 }

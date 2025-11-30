@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class User {
 
     public User() {
-        // Constructor vacío obligatorio
+        
     }
 
     public User(String username, String password, String email, String nombre, String apellido,
@@ -45,7 +45,7 @@ public class User {
     private LocalDate fechaNacimiento;
     private String genero;
     private String telefono;
-    private String medioPago; // NUEVO: medio de pago
+    private String medioPago; 
     private String role;
 
     private LocalDateTime createdAt = LocalDateTime.now();
