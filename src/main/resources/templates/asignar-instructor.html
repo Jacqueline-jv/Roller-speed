@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignar Instructor</title>
+</head>
+<body>
+
+<h2>Asignar Instructor</h2>
+
+<form action="/admin/asignar" method="post">
+
+    <input type="hidden" name="claseId" value="{{clase.id}}">
+
+    <label>Clase:</label>
+    <p>{{clase.nombre}}</p>
+
+    <label>Instructor:</label>
+    <select name="instructor">
+        <option th:each="inst : ${instructores}"
+                th:value="${inst.username}"
+                th:text="${inst.username}">
+        </option>
+    </select>
+
+    <button type="submit">Asignar</button>
+</form>
+
+</body>
+</html>
