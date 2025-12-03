@@ -21,7 +21,7 @@ public class SecurityConfig {
 
         http
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()   // Permitir TODO
+                .anyRequest().permitAll()   // Permitir TODOS 
             )
             .csrf(csrf -> csrf.disable())        // desactivar CSRF
             .formLogin(form -> form.disable())   // desactivar login por formulario
