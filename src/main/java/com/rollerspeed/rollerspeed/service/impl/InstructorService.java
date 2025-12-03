@@ -16,19 +16,22 @@ public class InstructorService {
         this.instructorRepository = instructorRepository;
     }
 
-    public List<com.rollerspeed.rollerspeed.repository.Instructor> listarTodos() {
+    // Listar todos los instructores
+    public List<Instructor> listarTodos() {
         return instructorRepository.findAll();
     }
 
-    @SuppressWarnings("unchecked")
-    public <S> Instructor guardar(Instructor instructor) {
-        return (Instructor) instructorRepository save;((Iterable<S>) instructor);
+    // Guardar un instructor
+    public Instructor guardar(Instructor instructor) {
+        return instructorRepository.save(instructor);
     }
 
+    // Obtener instructor por ID
     public Optional<Instructor> obtenerPorId(Long id) {
-        return Optional.empty();
+        return instructorRepository.findById(id);
     }
 
+    // Eliminar instructor por ID
     public void eliminar(Long id) {
         instructorRepository.deleteById(id);
     }
