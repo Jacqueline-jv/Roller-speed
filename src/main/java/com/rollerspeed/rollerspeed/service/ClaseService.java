@@ -13,4 +13,7 @@ public interface ClaseService {
     Clase buscarPorId(Long id);
 
     void eliminarClase(Long id);
+    
+    Object obtenerTodas();
 }
+
