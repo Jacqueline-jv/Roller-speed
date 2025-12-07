@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${titulo ?: 'Asignar Instructor'}">Asignar Instructor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      padding-top: 20px;
+    }
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+    .card-header {
+      background-color: #4a6fa5;
+      color: white;
+      border-radius: 10px 10px 0 0 !important;
+    }
+    .btn-primary {
+      background-color: #4a6fa5;
+      border-color: #4a6fa5;
+    }
+    .btn-primary:hover {
+      background-color: #3a5980;
+      border-color: #3a5980;
+    }
+  </style>
+    <meta charset="UTF-8">
+    <title>Asignar Instructor</title>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <!-- Mensaje del servidor -->
+        <div th:if="${param.mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <span th:text="${param.mensaje}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h4 class="mb-0">
+              <i class="bi bi-person-plus me-2"></i>
+              Asignar Instructor
+            </h4>
+          </div>
+          <div class="card-body">
+            <!-- FORMULARIO CON RUTA ACTUALIZADA -->
+            <form th:action="@{/admin/procesar-asignacion}" method="post">
+              
+              <!-- Información de la Clase -->
+              <div class="mb-4">
+                <h5 class="text-primary mb-3">
+                  <i class="bi bi-book me-2"></i>Información de la Clase
+                </h5>
+                <div class="bg-light p-3 rounded">
+                  <p class="mb-1">
+                    <strong>Clase:</strong> 
+                    <span th:text="${clase.nombre}">Yoga Avanzado</span>
+                  </p>
+                  <p class="mb-1">
+                    <strong>Código:</strong> 
+                    <span th:text="${clase.codigo}">CLS-2024-001</span>
+                  </p>
+                  <p class="mb-1">
+                    <strong>Horario:</strong> 
+                    <span th:text="${clase.horario}">Lunes y Miércoles, 18:00-19:30</span>
+                  </p>
+                  <p class="mb-0">
+                    <strong>Estudiantes:</strong> 
+                    <span th:text="${clase.estudiantes}">25</span>
+                  </p>
+                </div>
+                <input type="hidden" name="claseId" th:value="${clase.id}" />
+              </div>
+              
+              <!-- Selección de Instructor -->
+              <div class="mb-4">
+                <h5 class="text-primary mb-3">
+                  <i class="bi bi-person-badge me-2"></i>Seleccionar Instructor
+                </h5>
+                <div class="form-group">
+                  <label class="form-label fw-bold">Instructor:</label>
+                  <select class="form-select" name="instructorId" required>
+                    <option value="" selected disabled>-- Selecciona un instructor --</option>
+                    <option th:each="instructor : ${instructores}"
+                            th:value="${instructor.id}"
+                            th:text="${instructor.nombreCompleto} + ' - ' + ${instructor.especialidad}">
+                      Instructor Ejemplo
+                    </option>
+                  </select>
+                </div>
+              </div>
+              
+              <!-- Fecha de Asignación -->
+              <div class="mb-4">
+                <h5 class="text-primary mb-3">
+                  <i class="bi bi-calendar me-2"></i>Fecha de Asignación
+                </h5>
+                <div class="form-group">
+                  <label class="form-label fw-bold">Fecha de Inicio:</label>
+                  <input type="date" 
+                         class="form-control" 
+                         name="fechaAsignacion"
+                         th:value="${fechaHoy}"
+                         required>
+                </div>
+              </div>
+              
+              <!-- Observaciones -->
+              <div class="mb-4">
+                <h5 class="text-primary mb-3">
+                  <i class="bi bi-chat-text me-2"></i>Observaciones (Opcional)
+                </h5>
+                <textarea class="form-control" 
+                          name="observaciones" 
+                          rows="3" 
+                          placeholder="Observaciones adicionales..."></textarea>
+              </div>
+              
+              <!-- Botones -->
+              <div class="d-flex justify-content-between mt-4">
+                <a th:href="@{/admin/clases}" class="btn btn-outline-secondary">
+                  <i class="bi bi-arrow-left me-2"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-2"></i>Asignar Instructor
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Establecer fecha mínima como hoy
+    document.addEventListener('DOMContentLoaded', function() {
+      const hoy = new Date().toISOString().split('T')[0];
+      const fechaInput = document.querySelector('input[type="date"]');
+      if (fechaInput && !fechaInput.value) {
+        fechaInput.value = hoy;
+      }
+      if (fechaInput) {
+        fechaInput.min = hoy;
+      }
+    });
+  </script>
+</body>
+</html>

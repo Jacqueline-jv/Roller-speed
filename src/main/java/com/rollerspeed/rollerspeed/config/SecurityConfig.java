@@ -9,38 +9,26 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    // Bean para encriptar contraseñas
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // CONFIGURACIÓN DE SEGURIDAD
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-           
-            .csrf(csrf -> csrf.disable())
-            .httpBasic(httpBasic -> httpBasic.disable())
-            .formLogin(form -> form.disable())
-
             .authorizeHttpRequests(auth -> auth
-                // ✔ Páginas públicas
-                .requestMatchers(
-                        "/", "/index", "/mision", "/vision", "/valores",
-                        "/servicios", "/eventos", "/noticias", "/clases",
-                        "/auth/**",
-                        "/css/**", "/js/**", "/images/**"
-                ).permitAll()
-
-                // ✔ Acceso por rol (tú controlas esto después del login manual)
-                .requestMatchers("/admin/**").permitAll()
-                .requestMatchers("/instructor/**").permitAll()
-                .requestMatchers("/alumno/**").permitAll()
-
-                // ✔ Todo lo demás también permitido
-                .anyRequest().permitAll()
-            );
+                .anyRequest().permitAll()   // Permitir TODOS 
+            )
+            .csrf(csrf -> csrf.disable())        // desactivar CSRF
+            .formLogin(form -> form.disable())   // desactivar login por formulario
+            .httpBasic(basic -> basic.disable()) // desactivar basic auth
+            .logout(logout -> logout.disable()); // desactivar logout
 
         return http.build();
     }
 }
+
