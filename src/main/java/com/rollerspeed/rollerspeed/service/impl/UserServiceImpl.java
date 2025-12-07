@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -75,5 +76,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> listarUsuarios() {
         return userRepository.findAll();
+    }
+
+    // Modificar usuario por Id
+    @Override
+    public User modificarUsuario(Long id, User user) {
+        User usuarioExistente = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con ID: " + id));
+        
+            usuarioExistente.setEmail(user.getEmail());
+            usuarioExistente.setNombre(user.getNombre());
+            usuarioExistente.setApellido(user.getApellido());
+            usuarioExistente.setTelefono(user.getTelefono());
+            return userRepository.save(usuarioExistente);
     }
 }

@@ -24,4 +24,7 @@ public interface UserService {
 
     // ✔ Listar todos los usuarios
     List<User> listarUsuarios();
+
+    // Modificar usuario por Id
+    User modificarUsuario(Long id, User user);
 }
