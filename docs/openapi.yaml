@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: RollerSpeed API
+  version: 1.0.0
+  description: Documentación de la API del proyecto RollerSpeed.
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /api/users:
+    get:
+      summary: Listar todos los usuarios
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Lista de usuarios
+
+    post:
+      summary: Crear un nuevo usuario
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Usuario creado
+
+  /api/users/getCorreo/{email}:
+    get:
+      summary: Buscar usuario por email
+      tags:
+        - Users
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario encontrado
+        '404':
+          description: Usuario no encontrado
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        nombre:
+          type: string
+        apellido:
+          type: string
+        fechaNacimiento:
+          type: string
+        genero:
+          type: string
+        telefono:
+          type: string
+        role:
+          type: string
