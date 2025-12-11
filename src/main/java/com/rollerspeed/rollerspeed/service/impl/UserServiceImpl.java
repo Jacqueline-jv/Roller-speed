@@ -7,86 +7,68 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    // ✔ Crear usuario general
     @Override
     public User crearUsuario(User user) {
-        // Encriptar contraseña
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Guardar usuario
         return userRepository.save(user);
     }
 
-    // ✔ Crear admin
     @Override
     public User crearAdmin(User user) {
         user.setRole("ADMIN");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return crearUsuario(user);
     }
 
-    // ✔ Crear instructor
     @Override
     public User crearInstructor(User user) {
         user.setRole("INSTRUCTOR");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return crearUsuario(user);
     }
 
-    // ✔ Crear alumno
     @Override
     public User crearAlumno(User user) {
         user.setRole("ALUMNO");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return crearUsuario(user);
     }
 
-    // ✔ Buscar por ID
     @Override
     public User buscarPorId(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
-    // ✔ Buscar por username (para login)
     @Override
     public User buscarPorUsername(String username) {
         return userRepository.findByUsername(username).orElse(null);
     }
 
-    // ✔ Validar contraseña para login
     @Override
     public boolean validarPassword(String raw, String encoded) {
         return passwordEncoder.matches(raw, encoded);
     }
 
-    // ✔ Listar usuarios
     @Override
     public List<User> listarUsuarios() {
         return userRepository.findAll();
     }
 
-    // Modificar usuario por Id
     @Override
-    public User modificarUsuario(Long id, User user) {
-        User usuarioExistente = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con ID: " + id));
-        
-            usuarioExistente.setEmail(user.getEmail());
-            usuarioExistente.setNombre(user.getNombre());
-            usuarioExistente.setApellido(user.getApellido());
-            usuarioExistente.setTelefono(user.getTelefono());
-            return userRepository.save(usuarioExistente);
+    public List<User> listarInstructores() {
+        return userRepository.findByRole("INSTRUCTOR");
+    }
+
+    @Override
+    public void actualizarUsuario(User user) {
+        userRepository.save(user);
     }
 }

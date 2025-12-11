@@ -6,14 +6,19 @@ import java.util.List;
 
 public interface ClaseService {
 
-    List<Clase> listarClases();
+    Clase crearClase(Clase clase);
 
-    Clase guardarClase(Clase clase);
-
-    Clase buscarPorId(Long id);
+    Clase actualizarClase(Long id, Clase clase);
 
     void eliminarClase(Long id);
-    
-    Object obtenerTodas();
+
+    List<Clase> listarClases();
+
+    Clase obtenerClasePorId(Long id);
+
+    Clase asignarInstructor(Long claseId, Long instructorId);
+
+    List<Clase> listarClasesPorInstructor(Long instructorId);
 }
+
 

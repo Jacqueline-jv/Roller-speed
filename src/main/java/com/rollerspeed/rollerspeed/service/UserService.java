@@ -5,26 +5,27 @@ import java.util.List;
 
 public interface UserService {
 
-    // ✔ Crear usuario general (alumno, instructor, admin)
+    // Crear usuario general
     User crearUsuario(User user);
 
-    // ✔ Métodos individuales (si deseas usarlos después)
+    // Crear según rol
     User crearAdmin(User user);
     User crearInstructor(User user);
     User crearAlumno(User user);
 
-    // ✔ Buscar usuario por ID
+    // Buscar usuario
     User buscarPorId(Long id);
-
-    // ✔ Buscar usuario por username (para login)
     User buscarPorUsername(String username);
 
-    // ✔ Validar contraseña (login)
+    // Validar contraseña
     boolean validarPassword(String raw, String encoded);
 
-    // ✔ Listar todos los usuarios
+    // Listar todos
     List<User> listarUsuarios();
 
-    // Modificar usuario por Id
-    User modificarUsuario(Long id, User user);
-}
+    // Listar instructores
+    List<User> listarInstructores();
+
+    // Actualizar usuario
+    void actualizarUsuario(User user);   
+} 
