@@ -1,0 +1,692 @@
+openapi: 3.0.3
+info:
+  title: RollerSpeed API
+  version: 1.0.0
+  description: >
+    RollerSpeed es la plataforma donde se gestiona todo lo relacionado con la
+    escuela de patinaje. Desde aquí organizamos usuarios, se registran nuevos alumnos,
+    asignamos instructores y programamos las clases que ofrecemos. Cada persona ingresa
+    según su rol: el administrador supervisa la operación, los instructores
+    revisan sus clases y los estudiantes consultan horarios, pagos, eventos y
+    novedades. Esta API reúne todos esos servicios para que el sistema funcione
+    de manera centralizada, transparente y rápida.
+  contact:
+    name: Equipo RollerSpeed
+    email: soporte@rollerspeed.com
+servers:
+  - url: http://localhost:8080
+    description: Servidor local de desarrollo
+
+tags:
+  - name: Auth
+    description: Operaciones de autenticación (login / logout / refresh)
+  - name: Users
+    description: Gestión de usuarios (admin / instructor / alumno)
+  - name: Classes
+    description: Gestión de clases (crear, listar, actualizar, eliminar)
+  - name: Events
+    description: Eventos y noticias del club
+  - name: Payments
+    description: Estado y registro de pagos
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Iniciar sesión (obtener JWT)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+            example:
+              username: "admin"
+              password: "123456"
+      responses:
+        '200':
+          description: Login exitoso — token JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                type: "Bearer"
+                expiresIn: 3600
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "Usuario o contraseña incorrectos"
+
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Listar todos los usuarios
+      description: Listado completo de usuarios. Requiere rol Admin para ver información completa.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+              examples:
+                sample:
+                  value:
+                    - id: 1
+                      username: "admin"
+                      email: "admin@rollerspeed.com"
+                      nombre: "Admin"
+                      apellido: "Sistema"
+                      role: "ADMIN"
+                    - id: 2
+                      username: "instructor1"
+                      email: "prof1@rollerspeed.com"
+                      nombre: "Ana"
+                      apellido: "Perez"
+                      role: "INSTRUCTOR"
+    post:
+      tags:
+        - Users
+      summary: Crear un nuevo usuario
+      description: Crear un usuario (Admin o registro público). No devuelve contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+            example:
+              username: "jdoe"
+              password: "password123"
+              email: "jdoe@gmail.com"
+              nombre: "John"
+              apellido: "Doe"
+              fechaNacimiento: "1990-05-15"
+              genero: "Masculino"
+              telefono: "3001234567"
+              role: "ALUMNO"
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 12
+                username: "jdoe"
+                email: "jdoe@gmail.com"
+                nombre: "John"
+                apellido: "Doe"
+                role: "ALUMNO"
+        '400':
+          description: Datos inválidos o usuario ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "El email ya está registrado"
+
+  /api/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Obtener usuario por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 12
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuario no encontrado
+    put:
+      tags:
+        - Users
+      summary: Actualizar usuario por ID
+      description: Actualiza los datos del usuario. Admin o el mismo usuario pueden actualizar.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuario no encontrado
+    delete:
+      tags:
+        - Users
+      summary: Eliminar usuario por ID
+      description: Solo rol Admin puede eliminar usuarios.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Usuario eliminado correctamente
+        '404':
+          description: Usuario no encontrado
+
+  /api/users/getCorreo/{email}:
+    get:
+      tags:
+        - Users
+      summary: Buscar un usuario por email
+      description: Buscar un usuario por su correo electrónico. Devuelve datos del perfil y rol.
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: Correo electrónico del usuario buscado
+          schema:
+            type: string
+            example: "usuario@rollerspeed.com"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Usuario encontrado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                usuarioEncontrado:
+                  value:
+                    id: 12
+                    username: "jdoe"
+                    email: "jdoe@gmail.com"
+                    nombre: "John"
+                    apellido: "Doe"
+                    fechaNacimiento: "1990-05-15"
+                    genero: "Masculino"
+                    telefono: "3001234567"
+                    role: "ALUMNO"
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "No existe un usuario con ese correo"
+
+  /api/classes:
+    get:
+      tags:
+        - Classes
+      summary: Listar clases
+      description: Listado de clases programadas. Los alumnos ven solo las clases disponibles y sus horarios; instructores ven las que tienen asignadas.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de clases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Class'
+    post:
+      tags:
+        - Classes
+      summary: Crear una clase
+      description: Solo Admin puede crear y programar clases.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassCreate'
+            example:
+              titulo: "Clase Nivel Intermedio"
+              descripcion: "Mejorar técnica de salto y giros"
+              fecha: "2025-12-15"
+              horaInicio: "18:00"
+              horaFin: "19:00"
+              instructorId: 3
+              capacidad: 20
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Clase creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+
+  /api/classes/{id}:
+    get:
+      tags:
+        - Classes
+      summary: Obtener clase por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Clase encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+        '404':
+          description: Clase no encontrada
+    put:
+      tags:
+        - Classes
+      summary: Actualizar clase por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassUpdate'
+      responses:
+        '200':
+          description: Clase actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+    delete:
+      tags:
+        - Classes
+      summary: Eliminar clase por ID
+      description: Admin puede eliminar clases programadas.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Clase eliminada
+
+  /api/events:
+    get:
+      tags:
+        - Events
+      summary: Listar próximos eventos y noticias
+      responses:
+        '200':
+          description: Lista de eventos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+    post:
+      tags:
+        - Events
+      summary: Crear evento / noticia
+      description: Admin crea eventos o noticias visibles para alumnos e instructores.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreate'
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Evento creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+
+  /api/payments/{userId}:
+    get:
+      tags:
+        - Payments
+      summary: Consultar estado de pagos de un usuario
+      description: Muestra historial y estado actual de pagos del alumno.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Estado de pagos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        '404':
+          description: Usuario no encontrado
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: "admin"
+        password:
+          type: string
+          example: "123456"
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token para autenticar peticiones
+        type:
+          type: string
+          example: "Bearer"
+        expiresIn:
+          type: integer
+          example: 3600
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: "maria123"
+        email:
+          type: string
+          format: email
+          example: "maria@gmail.com"
+        nombre:
+          type: string
+          example: "María"
+        apellido:
+          type: string
+          example: "López"
+        fechaNacimiento:
+          type: string
+          format: date
+          example: "1998-07-12"
+        genero:
+          type: string
+          example: "Femenino"
+        telefono:
+          type: string
+          example: "3119876543"
+        role:
+          type: string
+          description: Rol del usuario (ADMIN, INSTRUCTOR, ALUMNO)
+          example: "INSTRUCTOR"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-10T15:30:00"
+
+    UserCreate:
+      type: object
+      required:
+        - username
+        - password
+        - email
+        - nombre
+        - apellido
+        - fechaNacimiento
+        - genero
+        - telefono
+        - role
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+          format: email
+        nombre:
+          type: string
+        apellido:
+          type: string
+        fechaNacimiento:
+          type: string
+          format: date
+        genero:
+          type: string
+        telefono:
+          type: string
+        role:
+          type: string
+
+    UserUpdate:
+      type: object
+      properties:
+        password:
+          type: string
+        email:
+          type: string
+          format: email
+        nombre:
+          type: string
+        apellido:
+          type: string
+        fechaNacimiento:
+          type: string
+          format: date
+        genero:
+          type: string
+        telefono:
+          type: string
+        role:
+          type: string
+
+    Class:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        titulo:
+          type: string
+          example: "Clase Nivel Avanzado"
+        descripcion:
+          type: string
+          example: "Trabajo en piruetas y velocidad"
+        fecha:
+          type: string
+          format: date
+          example: "2025-12-15"
+        horaInicio:
+          type: string
+          example: "18:00"
+        horaFin:
+          type: string
+          example: "19:00"
+        instructorId:
+          type: integer
+          example: 3
+        capacidad:
+          type: integer
+          example: 20
+        inscritos:
+          type: integer
+          example: 12
+
+    ClassCreate:
+      type: object
+      required:
+        - titulo
+        - fecha
+        - horaInicio
+        - horaFin
+      properties:
+        titulo:
+          type: string
+        descripcion:
+          type: string
+        fecha:
+          type: string
+          format: date
+        horaInicio:
+          type: string
+        horaFin:
+          type: string
+        instructorId:
+          type: integer
+        capacidad:
+          type: integer
+
+    ClassUpdate:
+      type: object
+      properties:
+        titulo:
+          type: string
+        descripcion:
+          type: string
+        fecha:
+          type: string
+          format: date
+        horaInicio:
+          type: string
+        horaFin:
+          type: string
+        instructorId:
+          type: integer
+        capacidad:
+          type: integer
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        descripcion:
+          type: string
+        fecha:
+          type: string
+          format: date
+        creadoPor:
+          type: string
+          example: "Admin"
+
+    EventCreate:
+      type: object
+      required:
+        - titulo
+        - fecha
+      properties:
+        titulo:
+          type: string
+        descripcion:
+          type: string
+        fecha:
+          type: string
+          format: date
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        periodo:
+          type: string
+          example: "2025-11"
+        monto:
+          type: number
+          format: float
+          example: 120.50
+        estado:
+          type: string
+          example: "PENDIENTE" # PENDIENTE, PAGADO, ATRASADO
+        fechaPago:
+          type: string
+          format: date
+          nullable: true
+
+  examples: {}
